@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\BankController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\JobTitleController;
+use App\Http\Controllers\ShiftController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -14,6 +18,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::resource('employees', EmployeeController::class);
+    Route::resource('jobtitles', JobTitleController::class);
+    Route::resource('banks', BankController::class);
+    Route::resource('shifts', ShiftController::class);
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

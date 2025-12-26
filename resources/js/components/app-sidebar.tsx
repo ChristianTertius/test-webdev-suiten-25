@@ -15,11 +15,28 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
+import { employees, jobtitles, banks, shifts } from '@/semuaroutes';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
+        title: 'Pegawai',
+        href: employees(),
+        icon: LayoutGrid,
+    },
+
+    {
+        title: 'Bagian',
+        href: jobtitles(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Shift',
+        href: shifts(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Bank',
+        href: banks(),
         icon: LayoutGrid,
     },
 ];
