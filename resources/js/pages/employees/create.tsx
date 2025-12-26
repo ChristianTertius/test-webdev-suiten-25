@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
@@ -21,7 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Tambah Pegawai',
     },
 ];
-// Di Employee Create/Edit Form
+
 const periodeGajianOptions = [
     { value: 'Mingguan', label: 'Mingguan' },
     { value: '2 Minggu', label: '2 Minggu (Bi-weekly)' },
@@ -30,6 +32,8 @@ const periodeGajianOptions = [
 ];
 
 export default function Create({ jobtitles, banks, shifts }) {
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
     const { data, setData, post, processing, errors } = useForm({
         nama_pegawai: '',
         job_title_id: '',
@@ -49,11 +53,17 @@ export default function Create({ jobtitles, banks, shifts }) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setShowConfirmDialog(true);
+    };
+
+    const handleConfirmSave = () => {
+        setShowConfirmDialog(false);
         post('/employees');
     };
+
     const handleAddJobTitle = () => {
         router.get('/jobtitles/create');
-    }
+    };
 
     const handleBack = () => {
         router.get('/employees');
@@ -86,14 +96,6 @@ export default function Create({ jobtitles, banks, shifts }) {
                             />
                             {errors.nama_pegawai && <p className="text-sm text-red-500">{errors.nama_pegawai}</p>}
                         </div>
-
-
-
-
-                        {/* Informasi Rekening */}
-
-
-                        {/* Informasi Gaji */}
 
                         <div className="space-y-2">
                             <Label htmlFor="gaji_pokok">Gaji Pokok</Label>
@@ -142,6 +144,7 @@ export default function Create({ jobtitles, banks, shifts }) {
                                 <p className="text-sm text-muted-foreground">Tidak ada data job title. Silakan tambahkan terlebih dahulu.</p>
                             </div>
                         )}
+
                         <div className="space-y-2">
                             <Label htmlFor="periode_gajian">Periode Gajian</Label>
                             <Select
@@ -160,6 +163,7 @@ export default function Create({ jobtitles, banks, shifts }) {
                                 </SelectContent>
                             </Select>
                         </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="nomor_telepon">Nomor Telepon</Label>
                             <Input
@@ -169,6 +173,7 @@ export default function Create({ jobtitles, banks, shifts }) {
                                 placeholder="Masukkan nomor telepon"
                             />
                         </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="gaji_harian">Gaji Harian</Label>
                             <Input
@@ -181,7 +186,7 @@ export default function Create({ jobtitles, banks, shifts }) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="gaji_harian">Nomor Rekening</Label>
+                            <Label htmlFor="nomor_rekening">Nomor Rekening</Label>
                             <Input
                                 id="nomor_rekening"
                                 type="number"
@@ -244,6 +249,7 @@ export default function Create({ jobtitles, banks, shifts }) {
                                 <p className="text-red-500 text-sm mt-1">{errors.bank_id}</p>
                             )}
                         </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="rate_lembur">Rate Lembur</Label>
                             <Input
@@ -304,6 +310,22 @@ export default function Create({ jobtitles, banks, shifts }) {
                     </div>
                 </form>
             </div>
+
+            {/* Confirmation Dialog */}
+            <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Simpan Data</AlertDialogTitle>
+                        <AlertDialogDescription>Anda akan menyimpan data yang sudah dibuat ke dalam sistem aplikasi ini</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmSave}>
+                            Simpan
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

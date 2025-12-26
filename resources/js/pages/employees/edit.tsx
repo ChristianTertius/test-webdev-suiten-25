@@ -2,11 +2,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { ArrowLeft, PlusIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,6 +66,8 @@ interface Props {
 }
 
 export default function Edit({ employee, jobtitles, banks, shifts }: Props) {
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
     const { data, setData, put, processing, errors } = useForm({
         nama_pegawai: employee.nama_pegawai || '',
         job_title_id: employee.job_title_id?.toString() || '',
@@ -74,7 +87,12 @@ export default function Edit({ employee, jobtitles, banks, shifts }: Props) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setShowConfirmDialog(true);
+    };
+
+    const handleConfirmUpdate = () => {
         put(`/employees/${employee.id}`);
+        setShowConfirmDialog(false);
     };
 
     const handleAddJobTitle = () => {
@@ -335,6 +353,25 @@ export default function Edit({ employee, jobtitles, banks, shifts }: Props) {
                     </div>
                 </form>
             </div>
+
+            {/* Confirmation Dialog */}
+            <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Konfirmasi Update Data</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Apakah Anda yakin ingin menyimpan perubahan data pegawai <strong>{data.nama_pegawai}</strong>?
+                            Pastikan semua data sudah benar sebelum menyimpan.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmUpdate} disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Ya, Update'}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

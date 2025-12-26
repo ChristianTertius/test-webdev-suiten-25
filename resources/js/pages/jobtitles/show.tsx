@@ -3,9 +3,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
 import { ArrowLeft, Pencil, TrashIcon, Briefcase } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,12 +42,21 @@ interface Props {
 }
 
 export default function Show({ jobtitle }: Props) {
+    const [showEditDialog, setShowEditDialog] = useState(false);
     // const handleBack = () => {
     //     router.get('/jobtitles');
     // };
 
-    const handleEdit = () => {
+    const handleConfirmEdit = () => {
         router.get(`/jobtitles/${jobtitle.id}/edit`);
+    };
+
+    const handleEdit = () => {
+        setShowEditDialog(true);
+    };
+
+    const handleBack = () => {
+        router.get('/jobtitles');
     };
 
     const handleDelete = () => {
@@ -62,13 +82,16 @@ export default function Show({ jobtitle }: Props) {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" onClick={handleEdit}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                        <Button type="button" variant="outline" onClick={handleBack}>
+                            Kembali
                         </Button>
                         <Button variant="destructive" onClick={handleDelete}>
                             <TrashIcon className="mr-2 h-4 w-4" />
                             Hapus
+                        </Button>
+                        <Button variant="outline" onClick={handleEdit}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
                         </Button>
                     </div>
                 </div>
@@ -83,6 +106,23 @@ export default function Show({ jobtitle }: Props) {
                     {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                 </div>
             </div>
+
+            <AlertDialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Konfirmasi Edit Data</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Apakah Anda yakin ingin mengedit data pegawai
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmEdit}>
+                            Edit
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

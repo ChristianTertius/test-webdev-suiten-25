@@ -19,18 +19,18 @@ interface Props {
 
 export default function Index({ employees }: Props) {
 
-    const handleDelete = (employee: Employee) => {
-        router.delete('/employees/' + employee.id);
-    }
+    // const handleDelete = (employee: Employee) => {
+    //     router.delete('/employees/' + employee.id);
+    // }
 
-    const handleDetail = (employee: Employee) => {
-        router.get(`/employees/${employee.id}`);
-    }
+    // const handleDetail = (employee: Employee) => {
+    //     router.get(`/employees/${employee.id}`);
+    // }
 
-    const handleEdit = (employee: Employee) => {
-        // Implement edit logic
-        router.get(`/employees/${employee.id}/edit`);
-    }
+    // const handleEdit = (employee: Employee) => {
+    //     // Implement edit logic
+    //     router.get(`/employees/${employee.id}/edit`);
+    // }
 
     const handleCreate = () => {
         router.get('/employees/create');
@@ -76,13 +76,13 @@ export default function Index({ employees }: Props) {
                                     <th className="px-6 py-3 text-wrap">Uang Makan(tanggal merah)</th>
                                     <th className="px-6 py-3">Rate Lembur</th>
                                     <th className="px-6 py-3 text-wrap">Rate Lembur(tanggal merah)</th>
-                                    <th className="px-6 py-3">Action</th>
+                                    {/* <th className="px-6 py-3">Action</th> */}
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {employees.map((employee, index) => (
-                                    <tr key={employee.id} className="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-default">
+                                    <tr onClick={() => router.visit(`/employees/${employee.id}`)} key={employee.id} className="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-default hover:bg-gray-50 cursor-pointer">
                                         <td className="px-6 py-4">{employee.nama_pegawai || '-'}</td>
                                         <td className="px-6 py-4">{employee.job_title.name || '-'}</td>
                                         <td className="px-6 py-4">{employee.nomor_telepon || '-'}</td>
@@ -97,27 +97,27 @@ export default function Index({ employees }: Props) {
                                         <td className="px-6 py-4">{employee.rate_lembur || '-'}</td>
                                         <td className="px-6 py-4">{employee.rate_lembur_tanggal_merah || '-'}</td>
 
-                                        <td className="px-6 py-4 flex gap-2 justify-center">
-
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleDetail(employee)}
-                                                title="Lihat Detail"
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                            </Button>
-                                            <Button variant={'outline'} size="sm" onClick={() => handleEdit(employee)}>
-                                                <Pencil />
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="destructive"
-                                                onClick={() => handleDelete(employee)}
-                                            >
-                                                <TrashIcon />
-                                            </Button>
-                                        </td>
+                                        {/* <td className="px-6 py-4 flex gap-2 justify-center"> */}
+                                        {/**/}
+                                        {/*     <Button */}
+                                        {/*         variant="ghost" */}
+                                        {/*         size="sm" */}
+                                        {/*         onClick={() => handleDetail(employee)} */}
+                                        {/*         title="Lihat Detail" */}
+                                        {/*     > */}
+                                        {/*         <Eye className="h-4 w-4" /> */}
+                                        {/*     </Button> */}
+                                        {/*     <Button variant={'outline'} size="sm" onClick={() => handleEdit(employee)}> */}
+                                        {/*         <Pencil /> */}
+                                        {/*     </Button> */}
+                                        {/*     <Button */}
+                                        {/*         size="sm" */}
+                                        {/*         variant="destructive" */}
+                                        {/*         onClick={() => handleDelete(employee)} */}
+                                        {/*     > */}
+                                        {/*         <TrashIcon /> */}
+                                        {/*     </Button> */}
+                                        {/* </td> */}
                                     </tr>
                                 ))}
                             </tbody>

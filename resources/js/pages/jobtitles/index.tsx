@@ -58,43 +58,43 @@ export default function Index({ jobtitles }: Props) {
                         <h3 className="text-xl font-semibold mb-2">Data Belum tersedia</h3>
                     </div>
                 ) : (
-                    <div className="relative whitespace-nowrap my-2 mx-auto overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
-                        <table className="w-full text-sm">
+                    <div className="w-full relative whitespace-nowrap my-2 overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+                        <table className="w-full text-sm text-center">
                             <thead className="bg-neutral-secondary-soft border-b border-default">
                                 <tr>
                                     <th className="px-6 py-3">Nama Bagian</th>
                                     <th className="px-6 py-3">Jumlah Pegawai</th>
-                                    <th className="px-6 py-3">Action</th>
+                                    {/* <th className="px-6 py-3">Action</th> */}
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {jobtitles.map((jobtitle, index) => (
-                                    <tr key={jobtitle.id} className="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-default">
+                                    <tr onClick={() => router.visit(`/jobtitles/${jobtitle.id}`)} key={jobtitle.id} className="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-default cursor-pointer hover:bg-gray-50">
                                         <td className="px-6 py-4">{jobtitle.name || '-'}</td>
                                         <td className="px-6 py-4 text-center">{jobtitle.employees_count || 0}</td> {/* ← Update ini */}
 
-                                        <td className="px-6 py-4 flex gap-2 justify-center">
-
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleDetail(jobtitle)}
-                                                title="Lihat Detail"
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                            </Button>
-                                            <Button variant={'outline'} size="sm" onClick={() => handleEdit(jobtitle)}>
-                                                <Pencil />
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="destructive"
-                                                onClick={() => handleDelete(jobtitle)}
-                                            >
-                                                <TrashIcon />
-                                            </Button>
-                                        </td>
+                                        {/* <td className="px-6 py-4 flex gap-2 justify-center"> */}
+                                        {/**/}
+                                        {/*     <Button */}
+                                        {/*         variant="ghost" */}
+                                        {/*         size="sm" */}
+                                        {/*         onClick={() => handleDetail(jobtitle)} */}
+                                        {/*         title="Lihat Detail" */}
+                                        {/*     > */}
+                                        {/*         <Eye className="h-4 w-4" /> */}
+                                        {/*     </Button> */}
+                                        {/*     <Button variant={'outline'} size="sm" onClick={() => handleEdit(jobtitle)}> */}
+                                        {/*         <Pencil /> */}
+                                        {/*     </Button> */}
+                                        {/*     <Button */}
+                                        {/*         size="sm" */}
+                                        {/*         variant="destructive" */}
+                                        {/*         onClick={() => handleDelete(jobtitle)} */}
+                                        {/*     > */}
+                                        {/*         <TrashIcon /> */}
+                                        {/*     </Button> */}
+                                        {/* </td> */}
                                     </tr>
                                 ))}
                             </tbody>

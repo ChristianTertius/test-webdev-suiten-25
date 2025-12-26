@@ -1,8 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import AppLayout from '@/layouts/app-layout';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
@@ -15,25 +24,38 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
     {
-        title: 'Daftar Pegawai',
+        title: 'Daftar Bagian',
         href: '/jobtitles',
+    },
+    {
+        title: 'Edit Bagian',
     },
 ];
 
-export default function Create() {
-    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const { data, setData, post, processing, errors } = useForm({
-        name: '',
-    });
+interface JobTitle {
+    id: number;
+    name: string;
+}
 
-    const handleConfirmSave = () => {
-        setShowConfirmDialog(false);
-        post('/jobtitles');
-    };
+interface Props {
+    jobtitle: JobTitle;
+}
+
+export default function Edit({ jobtitle }: Props) {
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+    const { data, setData, put, processing, errors } = useForm({
+        name: jobtitle.name || '',
+    });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setShowConfirmDialog(true);
+    };
+
+    const handleConfirmUpdate = () => {
+        put(`/jobtitles/${jobtitle.id}`);
+        setShowConfirmDialog(false);
     };
 
     const handleBack = () => {
@@ -42,33 +64,31 @@ export default function Create() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Tambah Pegawai" />
+            <Head title={`Edit - ${jobtitle.name}`} />
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 sm:p-6">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={handleBack}>
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
-                        <h1 className="font-bold text-2xl">Tambah Pegawai Baru</h1>
-                        <p className="text-muted-foreground">TESTTTTTTTTTTTTTTTTTTTTT</p>
+                        <h1 className="font-bold text-2xl">Edit Bagian</h1>
+                        <p className="text-muted-foreground">Perbarui informasi bagian</p>
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="bg-neutral-primary-soft p-6">
+                <form onSubmit={handleSubmit} className="bg-neutral-primary-soft rounded-xl p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Informasi Pribadi */}
                         <div className="space-y-2">
-                            <Label htmlFor="name">Nama Pegawai <span className="text-red-500">*</span></Label>
+                            <Label htmlFor="name">Nama Bagian <span className="text-red-500">*</span></Label>
                             <Input
                                 id="name"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
-                                placeholder="Masukkan nama pegawai"
+                                placeholder="Masukkan nama bagian"
                                 className={errors.name ? 'border-red-500' : ''}
                             />
                             {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
                         </div>
-
                     </div>
 
                     <div className="flex justify-end gap-3 mt-8">
@@ -76,21 +96,25 @@ export default function Create() {
                             Batal
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {processing ? 'Menyimpan...' : 'Simpan Pegawai'}
+                            {processing ? 'Menyimpan...' : 'Update Bagian'}
                         </Button>
                     </div>
                 </form>
             </div>
+
+            {/* Confirmation Dialog */}
             <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Simpan Data</AlertDialogTitle>
-                        <AlertDialogDescription>Anda akan menyimpan data yang sudah dibuat ke dalam sistem aplikasi ini</AlertDialogDescription>
+                        <AlertDialogTitle>Konfirmasi Update Data</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Apakah Anda yakin ingin menyimpan perubahan bagian <strong>{data.name}</strong>?
+                        </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Batal</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmSave}>
-                            Simpan
+                        <AlertDialogAction onClick={handleConfirmUpdate} disabled={processing}>
+                            {processing ? 'Menyimpan...' : 'Ya, Update'}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

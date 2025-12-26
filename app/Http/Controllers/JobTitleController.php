@@ -56,17 +56,27 @@ class JobTitleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(JobTitle $jobTitle)
+    public function edit(JobTitle $jobtitle)
     {
-        //
+        return Inertia::render('jobtitles/edit', [
+            'jobtitle' => $jobtitle,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, JobTitle $jobTitle)
+    public function update(Request $request, JobTitle $jobtitle)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $jobtitle->update($validatedData);
+
+        return Inertia::render('jobtitles/show', [
+            'jobtitle' => $jobtitle,
+        ]);
     }
 
     /**

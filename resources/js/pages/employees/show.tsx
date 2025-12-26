@@ -6,7 +6,18 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ArrowLeft, Pencil, TrashIcon } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,11 +66,16 @@ interface Props {
 }
 
 export default function Show({ employee, jobtitles, banks, shifts }: Props) {
+    const [showEditDialog, setShowEditDialog] = useState(false);
     const handleBack = () => {
         router.get('/employees');
     };
 
     const handleEdit = () => {
+        setShowEditDialog(true);
+    };
+
+    const handleConfirmEdit = () => {
         router.get(`/employees/${employee.id}/edit`);
     };
 
@@ -83,13 +99,16 @@ export default function Show({ employee, jobtitles, banks, shifts }: Props) {
                         </div>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" onClick={handleEdit}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                        <Button type="button" variant="outline" onClick={handleBack}>
+                            Kembali
                         </Button>
                         <Button variant="destructive" onClick={handleDelete}>
                             <TrashIcon className="mr-2 h-4 w-4" />
                             Hapus
+                        </Button>
+                        <Button variant="outline" onClick={handleEdit}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Edit
                         </Button>
                     </div>
                 </div>
@@ -286,18 +305,25 @@ export default function Show({ employee, jobtitles, banks, shifts }: Props) {
                             />
                         </div>
                     </div>
-
-                    <div className="flex justify-end gap-3 mt-8">
-                        <Button type="button" variant="outline" onClick={handleBack}>
-                            Kembali
-                        </Button>
-                        <Button onClick={handleEdit}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Edit Pegawai
-                        </Button>
-                    </div>
                 </div>
             </div>
+            {/* Edit Confirmation Dialog */}
+            <AlertDialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Konfirmasi Edit Data</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Apakah Anda yakin ingin mengedit data pegawai <strong>{employee.nama_pegawai}</strong>?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleConfirmEdit}>
+                            Edit
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }
