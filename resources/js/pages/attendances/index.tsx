@@ -161,12 +161,12 @@ export default function Index({ attendances, jobtitles, filters }: Props) {
                         <table className="w-full text-sm">
                             <thead className="bg-neutral-secondary-soft border-b border-default">
                                 <tr>
-                                    <th className="px-6 py-3 text-left">Status</th>
+                                    <th className="px-6 py-3 text-left">Tanggal</th>
                                     <th className="px-6 py-3 text-left">Nama Pegawai</th>
                                     <th className="px-6 py-3 text-left">Bagian</th>
+                                    {/* <th className="px-6 py-3 text-left">Kehadiran</th> */}
                                     <th className="px-6 py-3 text-left">Jam Pulang</th>
-                                    <th className="px-6 py-3 text-left">Hari Kerja</th>
-                                    <th className="px-6 py-3 text-left">Jam Lembur</th>
+                                    <th className="px-6 py-3 text-left">Hari Kerja + Lembur</th>
                                     <th className="px-6 py-3 text-left">Catatan</th>
                                 </tr>
                             </thead>
@@ -177,29 +177,31 @@ export default function Index({ attendances, jobtitles, filters }: Props) {
                                         key={attendance.id}
                                         className="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-default"
                                     >
-                                        <td className="px-6 py-4">
-                                            {attendance.is_present ? (
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    <CheckCircle className="h-3 w-3" />
-                                                    Hadir
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                    <XCircle className="h-3 w-3" />
-                                                    Tidak Hadir
-                                                </span>
-                                            )}
-                                        </td>
+                                        <td className="px-6 py-4">{formatDate(attendance.tanggal)}</td>
                                         <td className="px-6 py-4 font-medium">{attendance.employee.nama_pegawai}</td>
                                         <td className="px-6 py-4">{attendance.job_title.name}</td>
+                                        {/* <td className="px-6 py-4"> */}
+                                        {/*     {attendance.is_present ? ( */}
+                                        {/*         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"> */}
+                                        {/*             <CheckCircle className="h-3 w-3" /> */}
+                                        {/*             Hadir */}
+                                        {/*         </span> */}
+                                        {/*     ) : ( */}
+                                        {/*         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"> */}
+                                        {/*             <XCircle className="h-3 w-3" /> */}
+                                        {/*             Tidak Hadir */}
+                                        {/*         </span> */}
+                                        {/*     )} */}
+                                        {/* </td> */}
                                         <td className="px-6 py-4">
                                             {attendance.jam_pulang || '-'}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {attendance.hari_kerja}
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {attendance.jam_lembur}
+                                            {attendance.is_present ? (
+                                                <span className="font-medium">
+                                                    {attendance.hari_kerja} + {attendance.jam_lembur}
+                                                </span>
+                                            ) : '-'}
                                         </td>
                                         <td className="px-6 py-4">
                                             {attendance.catatan || '-'}

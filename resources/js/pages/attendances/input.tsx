@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { Save, FileText, ArrowLeft } from 'lucide-react';
+import { Save, FileText, ArrowLeft, Calculator } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -77,6 +77,35 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
         });
     };
 
+    // Function to calculate hari_kerja and jam_lembur based on jam_pulang
+    const calculateWorkHours = (jamPulang: string): { hariKerja: number; jamLembur: number } => {
+        if (!jamPulang) return { hariKerja: 0, jamLembur: 0 };
+
+        const [hours, minutes] = jamPulang.split(':').map(Number);
+        const totalMinutes = hours * 60 + minutes;
+
+        // Jam kerja normal: 09:00 - 17:00 (8 jam = 480 menit)
+        const jamNormalSelesai = 17 * 60; // 17:00 = 1020 menit
+
+        if (totalMinutes <= jamNormalSelesai) {
+            // Pulang sebelum atau tepat 17:00
+            return { hariKerja: 1, jamLembur: 0 };
+        }
+
+        // Hitung jam lembur dari jam 17:00
+        const menitLembur = totalMinutes - jamNormalSelesai;
+        const jamLembur = Math.floor(menitLembur / 60);
+
+        // Logika: setiap 8 jam lembur = 1 hari kerja tambahan
+        const hariTambahan = Math.floor(jamLembur / 8);
+        const sisaJamLembur = jamLembur % 8;
+
+        return {
+            hariKerja: 1 + hariTambahan,
+            jamLembur: sisaJamLembur
+        };
+    };
+
     const updateAttendance = (index: number, field: string, value: any) => {
         const newAttendances = [...data.attendances];
         newAttendances[index] = {
@@ -92,6 +121,13 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
             newAttendances[index].catatan = '';
         }
 
+        // Auto-calculate when jam_pulang changes
+        if (field === 'jam_pulang' && value && newAttendances[index].is_present) {
+            const calculated = calculateWorkHours(value);
+            newAttendances[index].hari_kerja = calculated.hariKerja;
+            newAttendances[index].jam_lembur = calculated.jamLembur;
+        }
+
         setData('attendances', newAttendances);
     };
 
@@ -99,19 +135,11 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
         post('/attendances/bulk-update', {
             onSuccess: () => {
                 console.log('Data berhasil disimpan, redirecting...');
-                // Gunakan reload dengan delay kecil untuk memastikan data ter-refresh
-                setTimeout(() => {
-                    router.visit('/attendances', {
-                        method: 'get',
-                        preserveState: false,
-                        preserveScroll: false,
-                    });
-                }, 100);
+                window.location.href = '/attendances';
             },
             onError: (errors) => {
                 console.error('Error:', errors);
             },
-            preserveScroll: false,
         });
     };
 
@@ -125,7 +153,7 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
                         <p className="text-muted-foreground">Kelola kehadiran pegawai harian</p>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" onClick={() => router.visit('/attendances')}>
+                        <Button variant="outline" onClick={() => window.location.href = '/attendances'}>
                             <ArrowLeft className="mr-2 h-4 w-4" />
                             Kembali
                         </Button>
@@ -135,6 +163,23 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
                         </Button>
                     </div>
                 </div>
+
+                {/* Info Box */}
+                {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4"> */}
+                {/*     <div className="flex items-start gap-3"> */}
+                {/*         <Calculator className="h-5 w-5 text-blue-600 mt-0.5" /> */}
+                {/*         <div className="text-sm text-blue-800"> */}
+                {/*             <p className="font-semibold mb-1">Perhitungan Otomatis Hari Kerja & Lembur:</p> */}
+                {/*             <ul className="list-disc list-inside space-y-1"> */}
+                {/*                 <li>Pulang jam 17:00 = <strong>1 hari + 0 jam lembur</strong></li> */}
+                {/*                 <li>Pulang jam 21:00 = <strong>1 hari + 4 jam lembur</strong></li> */}
+                {/*                 <li>Pulang jam 01:00 = <strong>2 hari + 0 jam lembur</strong></li> */}
+                {/*                 <li>Pulang jam 23:00 = <strong>1 hari + 6 jam lembur</strong></li> */}
+                {/*             </ul> */}
+                {/*             <p className="mt-2 text-xs italic">*Perhitungan otomatis berdasarkan jam pulang</p> */}
+                {/*         </div> */}
+                {/*     </div> */}
+                {/* </div> */}
 
                 {/* Filter Section */}
                 <div className="bg-neutral-primary-soft rounded-xl border border-default p-4">
@@ -216,8 +261,7 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
                                     <th className="px-6 py-3 text-left">Nama Pegawai</th>
                                     <th className="px-6 py-3 text-left">Bagian</th>
                                     <th className="px-6 py-3 text-left">Jam Pulang</th>
-                                    <th className="px-6 py-3 text-left">Hari Kerja</th>
-                                    <th className="px-6 py-3 text-left">Jam Lembur</th>
+                                    <th className="px-6 py-3 text-left">Hari + Lembur</th>
                                     <th className="px-6 py-3 text-left">Catatan</th>
                                 </tr>
                             </thead>
@@ -248,24 +292,13 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
                                             />
                                         </td>
                                         <td className="px-6 py-4">
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                value={data.attendances[index]?.hari_kerja || 0}
-                                                onChange={(e) => updateAttendance(index, 'hari_kerja', parseInt(e.target.value) || 0)}
-                                                disabled={!data.attendances[index]?.is_present}
-                                                className="w-20 px-2 py-1 border border-default rounded bg-neutral-primary disabled:bg-gray-100 disabled:cursor-not-allowed text-sm"
-                                            />
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                value={data.attendances[index]?.jam_lembur || 0}
-                                                onChange={(e) => updateAttendance(index, 'jam_lembur', parseInt(e.target.value) || 0)}
-                                                disabled={!data.attendances[index]?.is_present}
-                                                className="w-20 px-2 py-1 border border-default rounded bg-neutral-primary disabled:bg-gray-100 disabled:cursor-not-allowed text-sm"
-                                            />
+                                            {data.attendances[index]?.is_present && data.attendances[index]?.jam_pulang ? (
+                                                <span className="inline-flex items-center px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800">
+                                                    {data.attendances[index].hari_kerja} + {data.attendances[index].jam_lembur}
+                                                </span>
+                                            ) : (
+                                                <span className="text-muted-foreground">-</span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <input
