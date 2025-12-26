@@ -10,3 +10,6 @@ export function shifts() {
 export function banks() {
     return '/banks';
 }
+export function attendances() {
+    return '/attendances';
+}

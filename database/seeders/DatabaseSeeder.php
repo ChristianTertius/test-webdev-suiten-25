@@ -34,7 +34,129 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        // Seed Job Titles
+        $jobTitles = [
+            ['name' => 'Manager', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Supervisor', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Staff', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Operator', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Admin', 'created_at' => now(), 'updated_at' => now()],
+        ];
+        DB::table('job_titles')->insert($jobTitles);
 
+        // Seed Banks
+        $banks = [
+            ['name' => 'BCA', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Mandiri', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'BNI', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'BRI', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'CIMB Niaga', 'created_at' => now(), 'updated_at' => now()],
+        ];
+        DB::table('banks')->insert($banks);
+
+        // Seed Shifts
+        $shifts = [
+            ['name' => 'Pagi (07:00 - 15:00)', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Siang (15:00 - 23:00)', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Malam (23:00 - 07:00)', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Full Day (08:00 - 17:00)', 'created_at' => now(), 'updated_at' => now()],
+        ];
+        DB::table('shifts')->insert($shifts);
+
+        // Seed Employees
+        $employees = [
+            [
+                'nama_pegawai' => 'Budi Santoso',
+                'gaji_pokok' => '5000000',
+                'job_title_id' => 1,
+                'shift_id' => 4,
+                'bank_id' => 1,
+                'periode_gajian' => 'Bulanan',
+                'nomor_telepon' => '081234567890',
+                'gaji_harian' => '200000',
+                'nomor_rekening' => '1234567890',
+                'uang_makan' => '50000',
+                'nama_rekening' => 'Budi Santoso',
+                'uang_makan_tanggal_merah' => 75000,
+                'rate_lembur' => 25000,
+                'rate_lembur_tanggal_merah' => 50000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_pegawai' => 'Siti Nurhaliza',
+                'gaji_pokok' => '4000000',
+                'job_title_id' => 2,
+                'shift_id' => 1,
+                'bank_id' => 2,
+                'periode_gajian' => 'Bulanan',
+                'nomor_telepon' => '081234567891',
+                'gaji_harian' => '160000',
+                'nomor_rekening' => '2234567890',
+                'uang_makan' => '45000',
+                'nama_rekening' => 'Siti Nurhaliza',
+                'uang_makan_tanggal_merah' => 70000,
+                'rate_lembur' => 20000,
+                'rate_lembur_tanggal_merah' => 40000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_pegawai' => 'Ahmad Dahlan',
+                'gaji_pokok' => '3500000',
+                'job_title_id' => 3,
+                'shift_id' => 2,
+                'bank_id' => 3,
+                'periode_gajian' => 'Bulanan',
+                'nomor_telepon' => '081234567892',
+                'gaji_harian' => '140000',
+                'nomor_rekening' => '3234567890',
+                'uang_makan' => '40000',
+                'nama_rekening' => 'Ahmad Dahlan',
+                'uang_makan_tanggal_merah' => 65000,
+                'rate_lembur' => 18000,
+                'rate_lembur_tanggal_merah' => 36000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_pegawai' => 'Dewi Lestari',
+                'gaji_pokok' => '3000000',
+                'job_title_id' => 4,
+                'shift_id' => 3,
+                'bank_id' => 4,
+                'periode_gajian' => 'Bulanan',
+                'nomor_telepon' => '081234567893',
+                'gaji_harian' => '120000',
+                'nomor_rekening' => '4234567890',
+                'uang_makan' => '35000',
+                'nama_rekening' => 'Dewi Lestari',
+                'uang_makan_tanggal_merah' => 60000,
+                'rate_lembur' => 15000,
+                'rate_lembur_tanggal_merah' => 30000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nama_pegawai' => 'Rudi Hartono',
+                'gaji_pokok' => '3200000',
+                'job_title_id' => 5,
+                'shift_id' => 4,
+                'bank_id' => 5,
+                'periode_gajian' => 'Bulanan',
+                'nomor_telepon' => '081234567894',
+                'gaji_harian' => '130000',
+                'nomor_rekening' => '5234567890',
+                'uang_makan' => '40000',
+                'nama_rekening' => 'Rudi Hartono',
+                'uang_makan_tanggal_merah' => 65000,
+                'rate_lembur' => 17000,
+                'rate_lembur_tanggal_merah' => 34000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+        DB::table('employees')->insert($employees);
         // JobTitle::create([
         //     'name' => 'Tukang Kayu',
         // ]);
