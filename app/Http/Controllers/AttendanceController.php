@@ -49,7 +49,19 @@ class AttendanceController extends Controller
                 ]
             );
 
+            // Force fresh dari database
+            $attendance->refresh();
             $attendance->load(['employee', 'job_title']);
+
+            // Debug log
+            Log::info("Loading attendance for {$employee->nama_pegawai}", [
+                'id' => $attendance->id,
+                'is_present' => $attendance->is_present,
+                'jam_pulang' => $attendance->jam_pulang,
+                'hari_kerja' => $attendance->hari_kerja,
+                'jam_lembur' => $attendance->jam_lembur,
+            ]);
+
             $attendances[] = $attendance;
         }
 
@@ -198,7 +210,6 @@ class AttendanceController extends Controller
     public function bulkUpdate(Request $request)
     {
         try {
-            // Log untuk debugging
             Log::info('Bulk Update Request:', $request->all());
 
             $validated = $request->validate([
@@ -213,46 +224,44 @@ class AttendanceController extends Controller
 
             $updated = 0;
 
-            foreach ($validated['attendances'] as $attendanceData) {
-                $attendance = Attendance::find($attendanceData['id']);
+            // Gunakan DB transaction untuk memastikan semua tersimpan
+            \DB::transaction(function () use ($validated, &$updated) {
+                foreach ($validated['attendances'] as $attendanceData) {
+                    $attendance = Attendance::find($attendanceData['id']);
 
-                if (!$attendance) {
-                    Log::warning("Attendance not found: {$attendanceData['id']}");
-                    continue;
+                    if (!$attendance) {
+                        Log::warning("Attendance not found: {$attendanceData['id']}");
+                        continue;
+                    }
+
+                    // Prepare data for update
+                    $updateData = [
+                        'is_present' => $attendanceData['is_present'],
+                    ];
+
+                    if (!$attendanceData['is_present']) {
+                        $updateData['jam_pulang'] = null;
+                        $updateData['hari_kerja'] = 0;
+                        $updateData['jam_lembur'] = 0;
+                        $updateData['catatan'] = null;
+                    } else {
+                        $updateData['jam_pulang'] = !empty($attendanceData['jam_pulang']) ? $attendanceData['jam_pulang'] : null;
+                        $updateData['hari_kerja'] = $attendanceData['hari_kerja'] ?? 0;
+                        $updateData['jam_lembur'] = $attendanceData['jam_lembur'] ?? 0;
+                        $updateData['catatan'] = $attendanceData['catatan'] ?? null;
+                    }
+
+                    // Update attendance
+                    $attendance->update($updateData);
+                    $updated++;
+
+                    Log::info("Updated attendance ID {$attendance->id}", $attendance->fresh()->toArray());
                 }
-
-                // Prepare data for update
-                $updateData = [
-                    'is_present' => $attendanceData['is_present'],
-                ];
-
-                // If not present, clear other fields
-                if (!$attendanceData['is_present']) {
-                    $updateData['jam_pulang'] = null;
-                    $updateData['hari_kerja'] = 0;
-                    $updateData['jam_lembur'] = 0;
-                    $updateData['catatan'] = null;
-                } else {
-                    // If present, update with provided values
-                    $updateData['jam_pulang'] = !empty($attendanceData['jam_pulang']) ? $attendanceData['jam_pulang'] : null;
-                    $updateData['hari_kerja'] = $attendanceData['hari_kerja'] ?? 0;
-                    $updateData['jam_lembur'] = $attendanceData['jam_lembur'] ?? 0;
-                    $updateData['catatan'] = $attendanceData['catatan'] ?? null;
-                }
-
-                // Update attendance
-                $attendance->update($updateData);
-
-                $updated++;
-
-                Log::info("Updated attendance ID {$attendance->id}", [
-                    'before' => $attendance->getOriginal(),
-                    'after' => $attendance->fresh()->toArray()
-                ]);
-            }
+            });
 
             Log::info("Total updated: {$updated}");
 
+            // Redirect ke index dengan data fresh
             return redirect()->route('attendances.index')
                 ->with('success', "Berhasil menyimpan {$updated} data absensi");
         } catch (\Exception $e) {

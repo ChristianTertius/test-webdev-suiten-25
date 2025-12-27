@@ -134,12 +134,15 @@ export default function InputAbsen({ attendances: initialAttendances, jobtitles,
     const handleSave = () => {
         post('/attendances/bulk-update', {
             onSuccess: () => {
-                console.log('Data berhasil disimpan, redirecting...');
-                window.location.href = '/attendances';
+                console.log('Data berhasil disimpan');
+                // Jangan gunakan window.location.href atau router.visit
+                // Biarkan Inertia handle redirect dari controller
             },
             onError: (errors) => {
                 console.error('Error:', errors);
             },
+            preserveState: false,
+            preserveScroll: false,
         });
     };
 

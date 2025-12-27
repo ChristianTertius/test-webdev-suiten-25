@@ -59,7 +59,7 @@ export default function Index({ jobtitles }: Props) {
                     </div>
                 ) : (
                     <div className="w-full relative whitespace-nowrap my-2 overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
-                        <table className="w-full text-sm text-center">
+                        <table className="w-full text-sm text-left">
                             <thead className="bg-neutral-secondary-soft border-b border-default">
                                 <tr>
                                     <th className="px-6 py-3">Nama Bagian</th>
@@ -72,7 +72,7 @@ export default function Index({ jobtitles }: Props) {
                                 {jobtitles.map((jobtitle, index) => (
                                     <tr onClick={() => router.visit(`/jobtitles/${jobtitle.id}`)} key={jobtitle.id} className="odd:bg-neutral-primary even:bg-neutral-secondary-soft border-b border-default cursor-pointer hover:bg-gray-50">
                                         <td className="px-6 py-4">{jobtitle.name || '-'}</td>
-                                        <td className="px-6 py-4 text-center">{jobtitle.employees_count || 0}</td> {/* ← Update ini */}
+                                        <td className="px-6 py-4">{jobtitle.employees_count || 0}</td> {/* ← Update ini */}
 
                                         {/* <td className="px-6 py-4 flex gap-2 justify-center"> */}
                                         {/**/}

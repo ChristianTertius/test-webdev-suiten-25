@@ -23,7 +23,7 @@ class Attendance extends Model
     protected $casts = [
         'tanggal' => 'date',
         'is_present' => 'boolean',
-        'jam_pulang' => 'datetime:H:i',
+        // 'jam_pulang' => 'datetime:H:i',
     ];
 
     public function employee()

@@ -38,7 +38,6 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::info('Request data:', $request->all());
         $validatedData = $request->validate([
             'nama_pegawai' => 'required|string|max:255',
             'job_title_id' => 'required|exists:job_titles,id',
